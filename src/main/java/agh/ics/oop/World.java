@@ -4,9 +4,9 @@ import java.util.Arrays;
 
 public class World {
 
-    static public void run(Direction[] dirs) {
+    static public void run(MoveDirection[] dirs) {
         int i = 0;
-        for(Direction dir: dirs) {
+        for(MoveDirection dir: dirs) {
             switch (dir) {
                 case FORWARD:
                     System.out.print("Zwierzak idzie do przodu"); break;
@@ -25,19 +25,19 @@ public class World {
         System.out.println();
     }
 
-    static private Direction[] read(String[] args) {
-        Direction[] dirs = new Direction[args.length];
+    static private MoveDirection[] read(String[] args) {
+        MoveDirection[] dirs = new MoveDirection[args.length];
         int i = 0;
         for(String chr: args) {
             switch(chr.toLowerCase()) {
                 case "f":
-                    dirs[i] = Direction.FORWARD; break;
+                    dirs[i] = MoveDirection.FORWARD; break;
                 case "b":
-                    dirs[i] = Direction.BACKWARD; break;
+                    dirs[i] = MoveDirection.BACKWARD; break;
                 case "r":
-                    dirs[i] = Direction.RIGHT; break;
+                    dirs[i] = MoveDirection.RIGHT; break;
                 case "l":
-                    dirs[i] = Direction.LEFT; break;
+                    dirs[i] = MoveDirection.LEFT; break;
                 default:
                     i -= 1; break;
             }
@@ -48,8 +48,10 @@ public class World {
     }
 
     static public void main(String[] args) {
-        System.out.println("Start");
-        run(read(args));
-        System.out.println("Stop");
+        Vector2d position1 = new Vector2d(1,2);
+        System.out.println(position1);
+        Vector2d position2 = new Vector2d(-2,1);
+        System.out.println(position2);
+        System.out.println(position1.add(position2));
     }
 }
