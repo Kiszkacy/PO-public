@@ -43,8 +43,8 @@ public enum MapDirection {
         switch (this) {
             case NORTH: return "Polnoc";
             case SOUTH: return "Poludnie";
-            case WEST: return "Wschod";
-            case EAST: return "Zachod";
+            case WEST: return "Zachod";
+            case EAST: return "Wschod";
         }
         return "";
     }
