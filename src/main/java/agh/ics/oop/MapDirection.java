@@ -41,10 +41,10 @@ public enum MapDirection {
 
     public String toString() {
         switch (this) {
-            case NORTH: return "Polnoc";
-            case SOUTH: return "Poludnie";
-            case WEST: return "Zachod";
-            case EAST: return "Wschod";
+            case NORTH: return "N";
+            case SOUTH: return "S";
+            case WEST: return "W";
+            case EAST: return "E";
         }
         return "";
     }

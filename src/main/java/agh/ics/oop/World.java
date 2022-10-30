@@ -5,11 +5,13 @@ import java.util.Arrays;
 public class World {
 
     static public void main(String[] args) {
-        Animal animal = new Animal();
-        MoveDirection[] orders = OptionsParser.parse(args);
-        for(MoveDirection ord : orders) {
-            animal.move(ord);
-        }
-        System.out.println(animal.toString());
+        MoveDirection[] directions = new OptionsParser().parse(args);
+        IWorldMap map = new RectangularMap(10, 5);
+        Vector2d[] positions = {new Vector2d(2,2), new Vector2d(3,4)};
+        IEngine engine = new SimulationEngine(directions, map, positions);
+
+        System.out.print(map.toString());
+        engine.run();
+        System.out.print(map.toString());
     }
 }
