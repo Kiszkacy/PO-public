@@ -4,49 +4,35 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class RectangularMap implements IWorldMap {
+public class RectangularMap extends AbstractWorldMap {
 
-    private List<Animal> anims = new LinkedList<>();
-    private final Vector2d mapSize;
-
+    private Vector2d mapSize;
 
     @Override
     public boolean canMoveTo(Vector2d position) {
         if (!(position.precedes(mapSize) && position.follows(new Vector2d(0,0)))) return false;
-        for(Animal a : anims)
-            if (a.isAt(position)) return false;
-        return true;
+        return super.canMoveTo(position);
     }
 
     @Override
     public boolean place(Animal animal) {
-        if (isOccupied(animal.getPosition()))
-            return false;
-        anims.add(animal);
-        return true;
+        Vector2d pos = animal.getPosition();
+        if (!(pos.precedes(mapSize) && pos.follows(new Vector2d(0,0)))) return false;
+        return super.place(animal);
     }
 
     @Override
-    public boolean isOccupied(Vector2d position) {
-        for(Animal a : anims)
-            if (a.isAt(position)) return true;
-        return false;
-    }
-
-    @Override
-    public Object objectAt(Vector2d position) {
-        for(Animal a : anims)
-            if (a.isAt(position)) return a;
-        return null;
-    }
-
-    @Override
-    public String toString() {
-        return new MapVisualizer(this).draw(new Vector2d(0,0), mapSize);
+    public Pair<Vector2d, Vector2d> getMapCorners() {
+        return new Pair<>(new Vector2d(0,0), this.mapSize);
     }
 
 
     public RectangularMap(int width, int height) {
         mapSize = new Vector2d(width-1, height-1);
+    }
+
+
+    public RectangularMap(Vector2d pos) {
+        mapSize = pos;
     }
 }
