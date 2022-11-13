@@ -5,13 +5,12 @@ import java.util.List;
 
 public class GrassField extends AbstractWorldMap {
 
-    private List<Grass> grass = new LinkedList<>();
     private int grassCount;
 
 
     private boolean placeGrass(Vector2d at) {
         if (isOccupied(at)) return false;
-        grass.add(new Grass(at));
+        objs.put(at, new Grass(at));
         return true;
     }
 
@@ -26,12 +25,18 @@ public class GrassField extends AbstractWorldMap {
     }
 
     @Override
+    public boolean canMoveTo(Vector2d position) {
+        AbstractWorldMapElement obj = objs.get(position);
+        return obj == null || obj instanceof Grass;
+    }
+
+    @Override
     public boolean place(Animal animal) {
         Object at = objectAt(animal.getPosition());
         if (at instanceof Grass) {
             Grass g = (Grass)at;
-            grass.remove(g);
-            anims.add(animal);
+            objs.remove(g);
+            objs.put(animal.getPosition(), animal);
             plantGrass(1);
             return true;
         }
@@ -39,33 +44,17 @@ public class GrassField extends AbstractWorldMap {
     }
 
     @Override
-    public boolean isOccupied(Vector2d position) {
-        for(Grass g : grass)
-            if (g.isAt(position)) return true;
-        return super.isOccupied(position);
-    }
-
-    @Override
-    public Object objectAt(Vector2d position) {
-        for(Grass g : grass)
-            if (g.isAt(position)) return g;
-        return super.objectAt(position);
-    }
-
-    @Override
-    public void moveNotify(Object obj) {
-        for(Animal a : anims) {
-            if (!(a.equals(obj))) continue;
-            // animal found
-            for (Grass g : grass) {
-                if (!(g.isAt(a.getPosition()))) continue;
-                // grass at that pos found
-                grass.remove(g);
-                plantGrass(1);
-                break;
-            }
-            break;
+    public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+        AbstractWorldMapElement obj = objs.get(oldPosition);
+        objs.remove(oldPosition);
+        // check for grass at new pos
+        Object targetObj = objs.get(newPosition);
+        if (targetObj != null && targetObj instanceof Grass) {
+            Grass g = (Grass)targetObj;
+            objs.remove(newPosition);
+            plantGrass(1);
         }
+        objs.put(newPosition, obj);
     }
 
     @Override
@@ -73,13 +62,9 @@ public class GrassField extends AbstractWorldMap {
         Vector2d upright = new Vector2d(Integer.MIN_VALUE, Integer.MIN_VALUE);
         Vector2d downleft = new Vector2d(Integer.MAX_VALUE, Integer.MAX_VALUE);
 
-        for(Animal a : anims) {
-            upright = a.getPosition().upperRight(upright);
-            downleft = a.getPosition().lowerLeft(downleft);
-        }
-        for(Grass g : grass) {
-            upright = g.getPosition().upperRight(upright);
-            downleft = g.getPosition().lowerLeft(downleft);
+        for(AbstractWorldMapElement o : objs.values()) {
+            upright = o.getPosition().upperRight(upright);
+            downleft = o.getPosition().lowerLeft(downleft);
         }
 
         return new Pair<>(downleft, upright);

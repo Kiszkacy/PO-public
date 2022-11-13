@@ -1,48 +1,44 @@
 package agh.ics.oop;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 
-public abstract class AbstractWorldMap implements IWorldMap{
+public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObserver {
 
-    protected List<Animal> anims = new LinkedList<>();
+    protected Map<Vector2d, AbstractWorldMapElement> objs = new HashMap<>();
 
 
     @Override
     public boolean canMoveTo(Vector2d position) {
-        for(Animal a : anims)
-            if (a.isAt(position)) return false;
-        return true;
+        return objs.get(position) == null;
     }
 
     @Override
     public boolean place(Animal animal) {
         if (isOccupied(animal.getPosition()))
             return false;
-        anims.add(animal);
+        objs.put(animal.getPosition(), animal);
+        animal.addObserver(this);
         return true;
     }
 
     @Override
     public boolean isOccupied(Vector2d position) {
-        for(Animal a : anims)
-            if (a.isAt(position)) return true;
-        return false;
+        return objs.get(position) != null;
     }
 
     @Override
     public Object objectAt(Vector2d position) {
-        for(Animal a : anims)
-            if (a.isAt(position)) return a;
-        return null;
+        return objs.get(position);
     }
 
     @Override
-    public void moveNotify(Object obj) {
-        return;
+    public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+        AbstractWorldMapElement obj = objs.get(oldPosition);
+        objs.remove(oldPosition);
+        objs.put(newPosition, obj);
     }
-
 
     abstract public Pair<Vector2d, Vector2d> getMapCorners();
 
