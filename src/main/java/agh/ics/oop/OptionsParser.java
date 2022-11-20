@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class OptionsParser {
 
-    static public MoveDirection[] parse(String[] args) {
+    static public MoveDirection[] parse(String[] args) throws IllegalArgumentException {
         MoveDirection[] res = new MoveDirection[args.length];
         int i = 0;
         for(String arg: args) {
@@ -22,7 +22,7 @@ public class OptionsParser {
                 case "left":
                     res[i] = MoveDirection.LEFT; break;
                 default:
-                    i -= 1; break;
+                    throw new IllegalArgumentException("'"+arg+"' is not a legal move specification");
             }
             i += 1;
         }

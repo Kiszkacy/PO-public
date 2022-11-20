@@ -10,7 +10,9 @@ public class GrassField extends AbstractWorldMap {
 
     private boolean placeGrass(Vector2d at) {
         if (isOccupied(at)) return false;
-        objs.put(at, new Grass(at));
+        Grass g = new Grass(at);
+        objs.put(at, g);
+        boundary.put(at, g);
         return true;
     }
 
@@ -33,14 +35,15 @@ public class GrassField extends AbstractWorldMap {
     @Override
     public boolean place(Animal animal) {
         Object at = objectAt(animal.getPosition());
+        boolean removedGrass = false;
         if (at instanceof Grass) {
             Grass g = (Grass)at;
-            objs.remove(g);
-            objs.put(animal.getPosition(), animal);
-            plantGrass(1);
-            return true;
+            objs.remove(g.getPosition());
+            removedGrass = true;
         }
-        return super.place(animal);
+        super.place(animal);
+        if (removedGrass) plantGrass(1);
+        return true;
     }
 
     @Override
@@ -51,23 +54,9 @@ public class GrassField extends AbstractWorldMap {
         Object targetObj = objs.get(newPosition);
         if (targetObj != null && targetObj instanceof Grass) {
             Grass g = (Grass)targetObj;
-            objs.remove(newPosition);
             plantGrass(1);
         }
         objs.put(newPosition, obj);
-    }
-
-    @Override
-    public Pair<Vector2d, Vector2d> getMapCorners() {
-        Vector2d upright = new Vector2d(Integer.MIN_VALUE, Integer.MIN_VALUE);
-        Vector2d downleft = new Vector2d(Integer.MAX_VALUE, Integer.MAX_VALUE);
-
-        for(AbstractWorldMapElement o : objs.values()) {
-            upright = o.getPosition().upperRight(upright);
-            downleft = o.getPosition().lowerLeft(downleft);
-        }
-
-        return new Pair<>(downleft, upright);
     }
 
 

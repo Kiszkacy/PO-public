@@ -23,7 +23,8 @@ public class SimulationEngine implements IEngine {
         moves = orders;
         for(Vector2d v : initialPos) {
             Animal anim = new Animal(v, map);
-            if (map.place(anim)) anims.add(anim);
+            map.place(anim);
+            anims.add(anim);
         }
     }
 }

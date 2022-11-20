@@ -7,6 +7,7 @@ import java.util.Map;
 public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObserver {
 
     protected Map<Vector2d, AbstractWorldMapElement> objs = new HashMap<>();
+    protected MapBoundary boundary = new MapBoundary();
 
 
     @Override
@@ -15,11 +16,13 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     }
 
     @Override
-    public boolean place(Animal animal) {
+    public boolean place(Animal animal) throws IllegalArgumentException {
         if (isOccupied(animal.getPosition()))
-            return false;
+            throw new IllegalArgumentException("Can not place animal at "+ animal.getPosition().toString()+" is already occupied");
         objs.put(animal.getPosition(), animal);
         animal.addObserver(this);
+        boundary.put(animal.getPosition(), animal);
+        animal.addObserver(boundary);
         return true;
     }
 
@@ -40,7 +43,18 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
         objs.put(newPosition, obj);
     }
 
-    abstract public Pair<Vector2d, Vector2d> getMapCorners();
+
+    public Pair<Vector2d, Vector2d> getMapCorners() {
+        Vector2d upright = new Vector2d(Integer.MIN_VALUE, Integer.MIN_VALUE);
+        Vector2d downleft = new Vector2d(Integer.MAX_VALUE, Integer.MAX_VALUE);
+
+        upright = boundary.xAxis.lastKey().upperRight(upright);
+        upright = boundary.yAxis.lastKey().upperRight(upright);
+        downleft = boundary.xAxis.firstKey().lowerLeft(downleft);
+        downleft = boundary.yAxis.firstKey().lowerLeft(downleft);
+
+        return new Pair<>(downleft, upright);
+    }
 
     @Override
     public String toString() {
