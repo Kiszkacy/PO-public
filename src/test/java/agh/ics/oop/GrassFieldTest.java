@@ -53,8 +53,13 @@ class GrassFieldTest {
         for(int i = 0; i < map.length; i++) {
             IWorldMap map_ = map[i];
             // place tests
-            for(int j = 0; j < placePos[i].length; j++)
-                assertEquals(placeSol[i][j], map_.place(new Animal(placePos[i][j], map_)));
+            for(int j = 0; j < placePos[i].length; j++) {
+                try {
+                    assertEquals(placeSol[i][j], map_.place(new Animal(placePos[i][j], map_)));
+                } catch (Exception e) {
+                    assertFalse(placeSol[i][j]);
+                }
+            }
             // canMoveTo tests
             for(int j = 0; j < canMoveToSol[i].length; j++)
                 assertEquals(canMoveToSol[i][j], map_.canMoveTo(testPos[i][j]));
