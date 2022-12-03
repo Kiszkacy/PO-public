@@ -7,6 +7,10 @@ public class Grass extends AbstractWorldMapElement {
         return "*";
     }
 
+    @Override
+    public String getTextureName() {
+        return "grass";
+    }
 
     public Grass(Vector2d pos) {
         this.pos = pos;

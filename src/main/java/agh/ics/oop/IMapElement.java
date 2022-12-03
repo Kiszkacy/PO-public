@@ -6,5 +6,7 @@ public interface IMapElement {
 
     boolean isAt(Vector2d pos);
 
+    String getTextureName();
+
     String toString();
 }

@@ -12,6 +12,7 @@ public class Animal extends AbstractWorldMapElement {
 
 
     public Animal move(MoveDirection dir) {
+        Vector2d oldPos = this.pos;
         if (dir == MoveDirection.LEFT)
             this.dir = this.dir.previous();
         else if (dir == MoveDirection.RIGHT)
@@ -20,14 +21,12 @@ public class Animal extends AbstractWorldMapElement {
             int offx = (this.dir == MapDirection.EAST ? 1 : 0) + (this.dir == MapDirection.WEST ? -1 : 0);
             int offy = (this.dir == MapDirection.NORTH ? 1 : 0) + (this.dir == MapDirection.SOUTH ? -1 : 0);
             Vector2d off = new Vector2d(offx, offy);
-            Vector2d oldPos = this.pos;
             pos = dir == MoveDirection.FORWARD && map.canMoveTo(pos.add(off)) ? pos.add(off) : pos;
             pos = dir == MoveDirection.BACKWARD && map.canMoveTo(pos.substract(off)) ? pos.substract(off) : pos;
-            if (!this.pos.equals(oldPos))
-                this.positionChanged(oldPos, this.pos);
-        }
-        return this;
 
+        }
+        this.positionChanged(oldPos, this.pos);
+        return this;
     }
 
 
@@ -47,6 +46,15 @@ public class Animal extends AbstractWorldMapElement {
         }
     }
 
+    @Override
+    public String getTextureName() {
+        switch (this.dir) {
+            case NORTH -> {return "up";}
+            case EAST -> {return "right";}
+            case SOUTH -> {return "down";}
+            default -> {return "left";}
+        }
+    }
 
     @Override
     public String toString() {
